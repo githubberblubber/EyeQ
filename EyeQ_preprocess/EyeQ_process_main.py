@@ -18,8 +18,8 @@ def process(image_list, save_path):
             r_img, borders, mask = prep.process_without_gb(img)
             r_img = cv.resize(r_img, (800, 800))
             prep.imwrite(dst_path, r_img)
-            # mask = cv.resize(mask, (800, 800))
-            # prep.imwrite(os.path.join('./original_mask', dst_image), mask)
+            mask = cv.resize(mask, (800, 800))
+            prep.imwrite(os.path.join('./original_mask', dst_image), mask)
         except:
             print(image_path)
             continue
