@@ -1,4 +1,5 @@
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import argparse
 import numpy as np
 import torch
@@ -18,7 +19,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 np.random.seed(0)
 
-data_root = '../Kaggle_DR_dataset/'
+data_root = '../data/sample'
 
 # Setting parameters
 parser = argparse.ArgumentParser(description='EyeQ_dense121')
@@ -40,9 +41,9 @@ args = parser.parse_args()
 
 # Images Labels
 train_images_dir = data_root + '/train'
-label_train_file = '../data/Label_EyeQ_train.csv'
+label_train_file = data_root+ '/label_train.csv'
 test_images_dir = data_root + '/test'
-label_test_file = '../data/Label_EyeQ_test.csv'
+label_test_file = data_root+ '/label_test.csv'
 
 save_file_name = args.model_dir + args.save_model + '.csv'
 
@@ -52,7 +53,7 @@ best_iter = 0
 cudnn.benchmark = True
 
 model = dense121_mcs(n_class=args.n_classes)
-
+ 
 if args.pre_model is not None:
     loaded_model = torch.load(os.path.join(args.model_dir, args.pre_model + '.tar'))
     model.load_state_dict(loaded_model['state_dict'])
