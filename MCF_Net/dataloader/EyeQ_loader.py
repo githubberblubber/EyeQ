@@ -25,9 +25,28 @@ def load_eyeQ_excel(data_dir, list_file, n_class=3):
 
     return image_names, labels
 
+def load_eyeQ_excel_no_GT_img_qual(data_dir, list_file, n_class=3):
+    image_names = []
+    labels = []
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(np.array(range(n_class)))
+    df_tmp = pd.read_csv(list_file)
+    img_num = len(df_tmp)
+
+    for idx in range(img_num):
+        image_name = df_tmp["image"][idx]
+        image_names.append(os.path.join(data_dir, image_name if ".png" in image_name else image_name + ".png"))
+
+        # label = lb.transform([int(df_tmp["quality"][idx])])
+        # labels.append(label)
+        labels.append([1, 1, 1])
+
+    return image_names, labels
 
 class DatasetGenerator(Dataset):
     def __init__(self, data_dir, list_file, transform1=None, transform2=None, n_class=3, set_name='train'):
+
+        # image_names, labels = load_eyeQ_excel(data_dir, list_file, n_class=3)
 
         image_names, labels = load_eyeQ_excel(data_dir, list_file, n_class=3)
 

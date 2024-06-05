@@ -8,7 +8,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 def process(image_list, save_path):
     
     for image_path in image_list:
-        dst_image = os.path.splitext(image_path.split('/')[-1])[0]+'.jpeg'
+        dst_image = os.path.splitext(image_path.split('/')[-1])[0]+'.png'
         dst_path = os.path.join(save_path, dst_image)
         if os.path.exists(dst_path):
             print('continue...')
@@ -27,7 +27,7 @@ def process(image_list, save_path):
 
 if __name__ == "__main__":
 
-    image_list = glob.glob(os.path.join('./original_img', '*.jpeg'))
+    image_list = glob.glob(os.path.join('./original_img', '*.png'))
     save_path = prep.fold_dir('./original_crop')
 
     process(image_list, save_path)
