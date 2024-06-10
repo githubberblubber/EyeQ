@@ -25,8 +25,14 @@ def load_eyeQ_excel(data_dir, list_file, n_class=3):
 
     return image_names, labels
 
+# The purpose of this function is to provide dummy values for the
+# ground truth image quality values ('Good':[1, 0, 0], 'Usable':
+# [0, 1, 0], 'Reject':[0, 0, 1], as on the paper). These values 
+# are not needed for test-only. Missing_image_names is added.
+
 def load_eyeQ_excel_no_GT_img_qual(data_dir, list_file, n_class=3):
     image_names = []
+    missing_image_names = []
     labels = []
     lb = preprocessing.LabelBinarizer()
     lb.fit(np.array(range(n_class)))
@@ -35,20 +41,28 @@ def load_eyeQ_excel_no_GT_img_qual(data_dir, list_file, n_class=3):
 
     for idx in range(img_num):
         image_name = df_tmp["image"][idx]
-        image_names.append(os.path.join(data_dir, image_name if ".png" in image_name else image_name + ".png"))
 
+        # Gets only the file name
+        image_name = image_name[image_name.find("/") + 1:] if "/" in image_name else image_name
+
+        image_path = os.path.join(data_dir, image_name if ".png" in image_name else image_name + ".png")
+        
+        if (os.path.exists(image_path)):
+            image_names.append(image_path)
+        else:
+            missing_image_names.append(image_path)
         # label = lb.transform([int(df_tmp["quality"][idx])])
         # labels.append(label)
-        labels.append([1, 1, 1])
+        labels.append([-1, -1, -1])
 
-    return image_names, labels
+    return image_names, labels, missing_image_names
 
 class DatasetGenerator(Dataset):
     def __init__(self, data_dir, list_file, transform1=None, transform2=None, n_class=3, set_name='train'):
 
         # image_names, labels = load_eyeQ_excel(data_dir, list_file, n_class=3)
-
-        image_names, labels = load_eyeQ_excel(data_dir, list_file, n_class=3)
+        
+        image_names, labels, missing_image_names = load_eyeQ_excel_no_GT_img_qual(data_dir, list_file, n_class=3)
 
         self.image_names = image_names
         self.labels = labels
@@ -56,6 +70,10 @@ class DatasetGenerator(Dataset):
         self.transform1 = transform1
         self.transform2 = transform2
         self.set_name = set_name
+
+        # When preprocessing, some images do not produce a preprocessed image
+        # (i.e. if an image is all black)
+        self.missing_image_names = missing_image_names
 
         srgb_profile = ImageCms.createProfile("sRGB")
         lab_profile = ImageCms.createProfile("LAB")
