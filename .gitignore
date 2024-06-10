@@ -1,1 +1,3 @@
-./MCF_Net/result/DenseNet121_v3_v1.tar
+MCF_Net/result/DenseNet121_v3_v1.tar
+MCF_Net/result/DenseNet121_v3_v1 static.tar
+*/__pycache__/*
